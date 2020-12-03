@@ -35,6 +35,7 @@ public class Main {
         c.setPrice(150.63);
         System.out.println(c);
 
+        System.out.println(LocalDateTime.now().toString());
 
 
     }
