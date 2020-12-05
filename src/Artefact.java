@@ -47,6 +47,6 @@ public class  Artefact
         return "ID=" + ID +
                 ", Name=" + Name  +
                 ", Country=" + Country +
-                ", CurrentOwner= {" + CurrentOwner + "}";
+                ", CurrentOwner= {" + CurrentOwner.toString() + "}";
     }
 }

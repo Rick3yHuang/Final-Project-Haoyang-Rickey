@@ -26,11 +26,11 @@ public class Transaction
 
     @Override
     public String toString() {
-        return "artefact= {" + artefact +
+        return "artefact= {" + artefact.toString() +
                 "}, Timestamp=" + Timestamp +
-                ", Seller= {" + Seller +
-                "}, Buyer= {" + Buyer +
-                "}, AuctionHouse= {" + AuctionHouse +
+                ", Seller= {" + Seller.toString() +
+                "}, Buyer= {" + Buyer.toString() +
+                "}, AuctionHouse= {" + AuctionHouse.toString() +
                 "}, Price=" + Price;
     }
 }
