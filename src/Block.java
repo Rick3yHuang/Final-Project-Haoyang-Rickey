@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Block
 {
@@ -54,7 +55,30 @@ public class Block
             nonce++;
             ThisHash = calculateBlockHash();
         }
+    }
+
+    public boolean TreatySC(Transaction t){
+
 
 
     }
+
+    public Transaction retriveProvenance (String id){
+
+
+
+    }
+
+    public Transaction retriveProvenance(String id, long timestamp){
+
+
+
+    }
+
+    public boolean verify_Blockchain(ArrayList<Block> BC){
+
+
+
+    }
+
 }
