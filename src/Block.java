@@ -59,7 +59,8 @@ public class Block
 
     public boolean TreatySC(Transaction t){
 
-
+        // need to make sure the artefact doesn't have at least 2 transactions after 2001
+        if (t.getBuyer().getBalance() - )
 
     }
 
