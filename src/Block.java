@@ -47,39 +47,6 @@ public class Block
         return buffer.toString();
     }
 
-    public void mineBlock(int prefix){
 
-        // need to meet the StackHolders's agreement in TreatySC
-        String pre = Integer.toString(prefix);
-        while(!ThisHash.substring(0, pre.length()).equals(pre)){
-            nonce++;
-            ThisHash = calculateBlockHash();
-        }
-    }
-
-    public boolean TreatySC(Transaction t){
-
-        // need to make sure the artefact doesn't have at least 2 transactions after 2001
-        if (t.getBuyer().getBalance() - )
-
-    }
-
-    public Transaction retriveProvenance (String id){
-
-
-
-    }
-
-    public Transaction retriveProvenance(String id, long timestamp){
-
-
-
-    }
-
-    public boolean verify_Blockchain(ArrayList<Block> BC){
-
-
-
-    }
 
 }
