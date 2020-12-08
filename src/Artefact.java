@@ -2,13 +2,13 @@ package src;
 
 public class  Artefact
 {
-    private int ID;
+    private String ID;
     private String Name;
-    private String Country;
+    private Stakeholder Country;
     private Stakeholder CurrentOwner;
 
 
-    public void setID(int ID)
+    public void setID(String ID)
     {
         this.ID = ID;
     }
@@ -16,7 +16,7 @@ public class  Artefact
     {
         Name = name;
     }
-    public void setCountry(String country)
+    public void setCountry(Stakeholder country)
     {
         Country = country;
     }
@@ -26,7 +26,7 @@ public class  Artefact
     }
 
 
-    public int getID()
+    public String getID()
     {
         return ID;
     }
@@ -34,7 +34,7 @@ public class  Artefact
     {
         return Name;
     }
-    public String getCountry()
+    public Stakeholder getCountry()
     {
         return Country;
     }

@@ -6,61 +6,92 @@ Blockchain Final Project
  */
 
 package src;
+import java.lang.reflect.Array;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
-public class Main {
-
-    public void mineBlock(int prefix){
+public class Main
+{
+    public void mineBlock(int prefix)
+    {
 
         // need to meet the StackHolders's agreement in TreatySC
+        Trea
         String pre = Integer.toString(prefix);
-        while(!ThisHash.substring(0, pre.length()).equals(pre)){
+        while(!ThisHash.substring(0, pre.length()).equals(pre))
+        {
             nonce++;
             ThisHash = calculateBlockHash();
         }
     }
 
-    public boolean TreatySC(Transaction t){
-
-        // need to make sure the artefact doesn't have at least 2 transactions after 2001
-        if (t.getBuyer().getBalance() - t.getPrice() < 0){
+    public boolean TreatySC(Transaction t, ArrayList<Block> blockchain)
+    {
+        if(retriveProvenance(t.getArtefact().getID(),978278400000L,blockchain).size() < 2)
             return false;
+        if (t.getBuyer().getBalance() - t.getPrice() < 0)
+            return false;
+
+        Double price = t.getPrice();
+        t.getBuyer().setBalance(t.getBuyer().getBalance() - price);
+        t.getAuctionHouse().setBalance(t.getAuctionHouse().getBalance() + 0.1 * price);
+        t.getArtefact().getCountry().setBalance(t.getArtefact().getCountry().getBalance() + 0.2*price);
+        t.getSeller().setBalance(t.getSeller().getBalance()+0.7*price);
+        return true;
+    }
+
+    public ArrayList<Transaction> retriveProvenance (String id, ArrayList<Block> blockchain)
+    {
+        ArrayList<Transaction> output = new ArrayList<Transaction>();
+        for(int i=0;i<blockchain.size();i++)
+        {
+            if(blockchain.get(i).getProvenance().getArtefact().getID().equals(id))
+                output.add(blockchain.get(i).getProvenance());
         }
+        return output;
+    }
+
+    public ArrayList<Transaction> retriveProvenance(String id, long timestamp,ArrayList<Block> blockchain)
+    {
+        LocalDateTime triggerTime =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp),
+                        TimeZone.getDefault().toZoneId());
+        ArrayList<Transaction> output = new ArrayList<Transaction>();
+
+        for(int i=0;i<blockchain.size();i++)
+        {
+            if(blockchain.get(i).getProvenance().getArtefact().getID().equals(id)&&
+                blockchain.get(i).getProvenance().getTimestamp().isAfter(triggerTime))
+            {
+                output.add(blockchain.get(i).getProvenance());
+            }
+        }
+        return output;
+    }
+
+    public boolean verify_Blockchain(ArrayList<Block> BC)
+    {
+
+
 
     }
 
-    public Transaction retriveProvenance (String id){
-
-
-
-    }
-
-    public Transaction retriveProvenance(String id, long timestamp){
-
-
-
-    }
-
-    public boolean verify_Blockchain(ArrayList<Block> BC){
-
-
-
-    }
 
     public static void main(String [] args)
     {
         Stakeholder a= new Stakeholder();
-        a.setID(1234);
+        a.setID("1234");
         a.setName("AA");
         a.setAddress("N/A");
         a.setBalance(1234.34);
         System.out.println(a);
 
         Artefact b= new Artefact();
-        b.setID(1111);
+        b.setID("1111");
         b.setName("BB");
-        b.setCountry("N/A");
+        b.setCountry(a);
         b.setCurrentOwner(a);
         System.out.println(b);
 
@@ -75,8 +106,11 @@ public class Main {
 
         System.out.println(LocalDateTime.now().toString());
 
-        /*
+
         ArrayList<Block> blockchain = new ArrayList<>();
+        
+
+         /*
         int prefix = 4;   //we want our hash to start with four zeroes
         String prefixString = new String(new char[prefix]).replace('\0', '0');
 

@@ -2,13 +2,13 @@ package src;
 
 public class Stakeholder
 {
-    private int ID;
+    private String ID;
     private String Name;
     private String Address;
     private double Balance;
 
 
-    public void setID(int ID)
+    public void setID(String ID)
     {
         this.ID = ID;
     }
@@ -26,7 +26,7 @@ public class Stakeholder
     }
 
 
-    public int getID()
+    public String getID()
     {
         return ID;
     }

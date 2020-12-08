@@ -3,8 +3,10 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 public class Block
 {
@@ -15,13 +17,13 @@ public class Block
     private String ThisHash;
 
     public void setPreviousHash(String previousHash) { PreviousHash = previousHash; }
-    public void setData(Transaction data) { Provenance = data; }
+    public void setProvenance(Transaction data) { Provenance = data; }
     public void setTimestamp(LocalDateTime timestamp) { Timestamp = timestamp; }
     public void setNonce(int nonce) { this.nonce = nonce; }
     public void setThisHash(String thisHash) { ThisHash = thisHash; }
 
     public String getPreviousHash() { return PreviousHash; }
-    public Transaction getData() { return Provenance; }
+    public Transaction getProvenance() { return Provenance; }
     public LocalDateTime getTimestamp() { return Timestamp; }
     public int getNonce() { return nonce; }
     public String getThisHash() { return ThisHash; }
@@ -46,7 +48,4 @@ public class Block
         }
         return buffer.toString();
     }
-
-
-
 }
