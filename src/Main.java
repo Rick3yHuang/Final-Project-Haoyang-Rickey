@@ -6,6 +6,7 @@ Blockchain Final Project
  */
 
 package src;
+import javax.swing.text.html.HTMLDocument;
 import java.lang.reflect.Array;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -14,16 +15,25 @@ import java.util.TimeZone;
 
 public class Main
 {
-    public void mineBlock(int prefix)
+    public void mineBlock(int prefix, Block block, ArrayList<Block> blockchain)
     {
 
         // need to meet the StackHolders's agreement in TreatySC
-        Trea
-        String pre = Integer.toString(prefix);
-        while(!ThisHash.substring(0, pre.length()).equals(pre))
+        if (TreatySC(block.getProvenance(), blockchain))
         {
-            nonce++;
-            ThisHash = calculateBlockHash();
+            // need to revise
+            block.setNonce(10);
+            String pre = null;
+            for (int i = 0; i < prefix; i++){
+                pre = pre + "0";
+            }
+            while (!block.getThisHash().substring(0, pre.length()).equals(pre)) {
+                block.setNonce(block.getNonce() + 1);
+                block.setThisHash(block.calculateBlockHash());
+            }
+            System.out.println("This block is successfully mined!!!");
+        } else{
+            System.out.println("Transaction Abort: The transaction doesn't meet the stakeholders agreement in TreatySC.");
         }
     }
 
@@ -73,8 +83,8 @@ public class Main
 
     public boolean verify_Blockchain(ArrayList<Block> BC)
     {
-
-
+        //need to revise
+        return false;
 
     }
 
