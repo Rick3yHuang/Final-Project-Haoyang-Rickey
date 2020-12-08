@@ -11,33 +11,38 @@ import java.lang.reflect.Array;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.TimeZone;
 
 public class Main
 {
-    public void mineBlock(int prefix, Block block, ArrayList<Block> blockchain)
-    {
 
-        // need to meet the StackHolders's agreement in TreatySC
+    public static void mineBlock(int prefix, Block block, ArrayList<Block> blockchain)
+    {
         if (TreatySC(block.getProvenance(), blockchain))
         {
-            // need to revise
-            block.setNonce(10);
-            String pre = null;
-            for (int i = 0; i < prefix; i++){
+            block.setNonce((int) Math.random());
+            String pre = "";
+            for (int i = 0; i < prefix; i++)
+            {
                 pre = pre + "0";
             }
-            while (!block.getThisHash().substring(0, pre.length()).equals(pre)) {
+            block.setThisHash(block.calculateBlockHash());
+            while (!block.getThisHash().substring(0, pre.length()).equals(pre))
+            {
                 block.setNonce(block.getNonce() + 1);
                 block.setThisHash(block.calculateBlockHash());
             }
-            System.out.println("This block is successfully mined!!!");
-        } else{
+            block.setMined(true);
+            System.out.println("This block is successfully mined with hash value: " + block.getThisHash());
+        }
+        else
+        {
             System.out.println("Transaction Abort: The transaction doesn't meet the stakeholders agreement in TreatySC.");
         }
     }
 
-    public boolean TreatySC(Transaction t, ArrayList<Block> blockchain)
+    public static boolean TreatySC(Transaction t, ArrayList<Block> blockchain)
     {
         if(retriveProvenance(t.getArtefact().getID(),978278400000L,blockchain).size() < 2)
             return false;
@@ -52,7 +57,7 @@ public class Main
         return true;
     }
 
-    public ArrayList<Transaction> retriveProvenance (String id, ArrayList<Block> blockchain)
+    public static ArrayList<Transaction> retriveProvenance (String id, ArrayList<Block> blockchain)
     {
         ArrayList<Transaction> output = new ArrayList<Transaction>();
         for(int i=0;i<blockchain.size();i++)
@@ -63,7 +68,7 @@ public class Main
         return output;
     }
 
-    public ArrayList<Transaction> retriveProvenance(String id, long timestamp,ArrayList<Block> blockchain)
+    public static ArrayList<Transaction> retriveProvenance(String id, long timestamp,ArrayList<Block> blockchain)
     {
         LocalDateTime triggerTime =
                 LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp),
@@ -73,7 +78,7 @@ public class Main
         for(int i=0;i<blockchain.size();i++)
         {
             if(blockchain.get(i).getProvenance().getArtefact().getID().equals(id)&&
-                blockchain.get(i).getProvenance().getTimestamp().isAfter(triggerTime))
+                    blockchain.get(i).getProvenance().getTimestamp().isAfter(triggerTime))
             {
                 output.add(blockchain.get(i).getProvenance());
             }
@@ -81,12 +86,30 @@ public class Main
         return output;
     }
 
-    public boolean verify_Blockchain(ArrayList<Block> BC)
+    public static boolean verify_Blockchain(ArrayList<Block> BC)
     {
-        //need to revise
-        return false;
-
+        for(int i=0;i<BC.size();i++)
+        {
+            if(i==0)
+            {
+                if(!BC.get(i).calculateBlockHash().equals(BC.get(i).getThisHash()))
+                    return false;
+                if(!BC.get(i).isMined())
+                    return false;
+            }
+            else
+            {
+                if(!BC.get(i).calculateBlockHash().equals(BC.get(i).getThisHash()))
+                    return false;
+                if(!BC.get(i).getPreviousHash().equals(BC.get(i-1).getThisHash()))
+                    return false;
+                if(!BC.get(i).isMined())
+                    return false;
+            }
+        }
+        return true;
     }
+
 
 
     public static void main(String [] args)
@@ -95,7 +118,7 @@ public class Main
         a.setID("1234");
         a.setName("AA");
         a.setAddress("N/A");
-        a.setBalance(1234.34);
+        a.setBalance(123222224.34);
         System.out.println(a);
 
         Artefact b= new Artefact();
@@ -118,42 +141,51 @@ public class Main
 
 
         ArrayList<Block> blockchain = new ArrayList<>();
-        
 
-         /*
-        int prefix = 4;   //we want our hash to start with four zeroes
+        int prefix = 4;
         String prefixString = new String(new char[prefix]).replace('\0', '0');
 
         //data1-data3 should be filled by the user
         //changed all getHash to getThisHash
 
-        Block genesisBlock = new Block(data1,   blockchain.get(blockchain.size() - 1).getThisHash(), new Date().getTime());
-        newBlock.mineBlock(prefix);
-        if (genesisBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(ArrayList<Block> BC))
+        Block Block1 = new Block(c,  null, LocalDateTime.now());
+        Block1.setThisHash(Block1.calculateBlockHash());
+        Block1.setMined(true);
+        Block Block2 = new Block(c,  Block1.getThisHash(), LocalDateTime.now());
+        Block2.setThisHash(Block2.calculateBlockHash());
+        Block2.setMined(true);
+        blockchain.add(Block1);
+        blockchain.add(Block2);
+
+        Block genesisBlock = new Block(c,  Block2.getThisHash(), LocalDateTime.now());
+        System.out.println("Start to mining the block");
+        mineBlock(prefix,genesisBlock,blockchain);
+        if (genesisBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
+            blockchain.add(genesisBlock);
+        else
+            System.out.println("Malicious block, not added to the chain");
+        System.out.println(blockchain.size()); //for testing
+
+        Block secondBlock = new Block(c, blockchain.get(blockchain.size() - 1).getThisHash(),LocalDateTime.now());
+        mineBlock(prefix,secondBlock,blockchain);
+        if (secondBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
+            blockchain.add(secondBlock);
+        else
+            System.out.println("Malicious block, not added to the chain");
+        System.out.println(blockchain.size()); //for testing
+
+        Block newBlock = new Block(c,blockchain.get(blockchain.size() - 1).getThisHash(),LocalDateTime.now());
+        mineBlock(prefix,newBlock,blockchain);
+        if (newBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
             blockchain.add(newBlock);
         else
             System.out.println("Malicious block, not added to the chain");
-
-        Block secondBlock = new Block(data2, blockchain.get(blockchain.size() - 1).getThisHash(),new Date().getTime());
-        newBlock.mineBlock(prefix);
-        if (secondBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(ArrayList<Block> BC))
-            blockchain.add(newBlock);
-        else
-            System.out.println("Malicious block, not added to the chain");
-
-        Block newBlock = new Block(data3,blockchain.get(blockchain.size() - 1).getThisHash(),
-                new Date().getTime());
-        newBlock.mineBlock(prefix);
-        if (newBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(ArrayList<Block> BC))
-            blockchain.add(newBlock);
-        else
-            System.out.println("Malicious block, not added to the chain");
-
-         */
-
-
+        System.out.println(blockchain.size()); //for testing
 
 
     }
+
+
+
 
 }

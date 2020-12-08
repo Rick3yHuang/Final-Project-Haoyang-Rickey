@@ -15,18 +15,30 @@ public class Block
     private LocalDateTime Timestamp;
     private int nonce;
     private String ThisHash;
+    private boolean Mined=false;
+
+    public Block( Transaction transaction, String previousHash,LocalDateTime timestamp)
+    {
+        PreviousHash=previousHash;
+        Provenance=transaction;
+        Timestamp=timestamp;
+    }
 
     public void setPreviousHash(String previousHash) { PreviousHash = previousHash; }
     public void setProvenance(Transaction data) { Provenance = data; }
     public void setTimestamp(LocalDateTime timestamp) { Timestamp = timestamp; }
     public void setNonce(int nonce) { this.nonce = nonce; }
     public void setThisHash(String thisHash) { ThisHash = thisHash; }
+    public void setMined(boolean ifMined) { this.Mined = ifMined; }
 
     public String getPreviousHash() { return PreviousHash; }
     public Transaction getProvenance() { return Provenance; }
     public LocalDateTime getTimestamp() { return Timestamp; }
     public int getNonce() { return nonce; }
     public String getThisHash() { return ThisHash; }
+    public boolean isMined() { return Mined; }
+
+
 
     public String calculateBlockHash()
     {
@@ -47,5 +59,18 @@ public class Block
             buffer.append(String.format("%02x", b));
         }
         return buffer.toString();
+    }
+
+    // overide toString for testing
+    @Override
+    public String toString() {
+        return "Block{" +
+                "PreviousHash='" + PreviousHash + '\'' +
+                ", Provenance=" + Provenance +
+                ", Timestamp=" + Timestamp +
+                ", nonce=" + nonce +
+                ", ThisHash='" + ThisHash + '\'' +
+                ", Mined=" + Mined +
+                '}';
     }
 }
