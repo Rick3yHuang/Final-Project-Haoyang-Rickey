@@ -10,6 +10,17 @@ public class Transaction
     private Stakeholder AuctionHouse;
     private double Price;
 
+
+    public Transaction(Artefact art, Stakeholder s,Stakeholder b, Stakeholder a, Double p)
+    {
+        artefact=art;
+        Timestamp=LocalDateTime.now();
+        Seller=s;
+        Buyer=b;
+        AuctionHouse=a;
+        Price=p;
+    }
+
     public void setArtefact(Artefact artefact) { this.artefact = artefact; }
     public void setTimestamp(LocalDateTime timestamp) { Timestamp = timestamp; }
     public void setSeller(Stakeholder seller) { Seller = seller; }

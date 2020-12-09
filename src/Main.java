@@ -146,35 +146,28 @@ public class Main
 
     public static void main(String [] args)
     {
-        //testing
+        ArrayList<Artefact> artefactList = new ArrayList<Artefact>();
+        ArrayList<Stakeholder> stakeholderList= new ArrayList<Stakeholder>();
+
         Stakeholder a = new Stakeholder();
         a.setID("1234");
         a.setName("AA");
         a.setAddress("N/A");
         a.setBalance(123222224.34);
-        System.out.println(a);
+        stakeholderList.add(a);
 
         Artefact b = new Artefact();
         b.setID("1111");
         b.setName("BB");
         b.setCountry(a);
         b.setCurrentOwner(a);
-        System.out.println(b);
+        artefactList.add(b);
 
-        Transaction c = new Transaction();
-        c.setArtefact(b);
-        c.setTimestamp(LocalDateTime.now());
-        c.setSeller(a);
-        c.setBuyer(a);
-        c.setAuctionHouse(a);
-        c.setPrice(150.63);
-        System.out.println(c);
+        Transaction c = new Transaction(b,a,a,a,150.63);
 
-        System.out.println(LocalDateTime.now().toString());
 
-        //create a blockchain for test
+        //create a blockchain
         ArrayList<Block> blockchain = new ArrayList<>();
-
         int prefix = 4;
         String prefixString = new String(new char[prefix]).replace('\0', '0');
 
@@ -183,36 +176,78 @@ public class Main
         Block Block1 = new Block(c,  null, LocalDateTime.now());
         Block1.setThisHash(Block1.calculateBlockHash());
         Block1.setMined(true);
-        Block Block2 = new Block(c,  Block1.getThisHash(), LocalDateTime.now());
+        blockchain.add(Block1);
+        Block Block2 = new Block(c,  blockchain.get(blockchain.size() - 1).getThisHash(), LocalDateTime.now());
         Block2.setThisHash(Block2.calculateBlockHash());
         Block2.setMined(true);
-        blockchain.add(Block1);
         blockchain.add(Block2);
 
-        Block genesisBlock = new Block(c,  Block2.getThisHash(), LocalDateTime.now());
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Please enter the ID of the artefact");
+        String artID = sc.nextLine();
+        System.out.println("Please enter the ID of the seller");
+        String sellerID = sc.nextLine();
+        System.out.println("Please enter the ID of the buyer");
+        String buyerID = sc.nextLine();
+        System.out.println("Please enter the ID of the auction house");
+        String auctionHID = sc.nextLine();
+        System.out.println("Please enter the price");
+        Double price= sc.nextDouble();
+
+        Artefact art= new Artefact();
+        for(int i=0;i<artefactList.size();i++)
+        {
+            if(artefactList.get(i).getID().equals(artID))
+                art=artefactList.get(i);
+        }
+        Stakeholder seller=new Stakeholder();
+        for(int i=0;i<stakeholderList.size();i++)
+        {
+            if(stakeholderList.get(i).getID().equals(sellerID))
+                seller=stakeholderList.get(i);
+        }
+        Stakeholder buyer=new Stakeholder();
+        for(int i=0;i<stakeholderList.size();i++)
+        {
+            if(stakeholderList.get(i).getID().equals(buyerID))
+                buyer=stakeholderList.get(i);
+        }
+        Stakeholder auctionH=new Stakeholder();
+        for(int i=0;i<stakeholderList.size();i++)
+        {
+            if(stakeholderList.get(i).getID().equals(auctionHID))
+                auctionH=stakeholderList.get(i);
+        }
+
+        Transaction data1 = new Transaction(art,seller,buyer,auctionH,price);
+
+
+
+        Block genesisBlock = new Block(data1,  blockchain.get(blockchain.size() - 1).getThisHash(), LocalDateTime.now());
         System.out.println("Start to mining the block");
         mineBlock(prefix,genesisBlock,blockchain);
         if (genesisBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
             blockchain.add(genesisBlock);
         else
             System.out.println("Malicious block, not added to the chain");
-        System.out.println(blockchain.size()); //for testing
+        System.out.println("Current length of the blockchain is: "+blockchain.size()); //for testing
 
-        Block secondBlock = new Block(c, blockchain.get(blockchain.size() - 1).getThisHash(),LocalDateTime.now());
-        mineBlock(prefix,secondBlock,blockchain);
-        if (secondBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
-            blockchain.add(secondBlock);
-        else
-            System.out.println("Malicious block, not added to the chain");
-        System.out.println(blockchain.size()); //for testing
-
-        Block newBlock = new Block(c,blockchain.get(blockchain.size() - 1).getThisHash(),LocalDateTime.now());
-        mineBlock(prefix,newBlock,blockchain);
-        if (newBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
-            blockchain.add(newBlock);
-        else
-            System.out.println("Malicious block, not added to the chain");
-        System.out.println(blockchain.size()); //for testing
+//        Block secondBlock = new Block(c, blockchain.get(blockchain.size() - 1).getThisHash(),LocalDateTime.now());
+//        mineBlock(prefix,secondBlock,blockchain);
+//        if (secondBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
+//            blockchain.add(secondBlock);
+//        else
+//            System.out.println("Malicious block, not added to the chain");
+//        System.out.println(blockchain.size()); //for testing
+//
+//        Block newBlock = new Block(c,blockchain.get(blockchain.size() - 1).getThisHash(),LocalDateTime.now());
+//        mineBlock(prefix,newBlock,blockchain);
+//        if (newBlock.getThisHash().substring(0, prefix).equals(prefixString) &&  verify_Blockchain(blockchain))
+//            blockchain.add(newBlock);
+//        else
+//            System.out.println("Malicious block, not added to the chain");
+//        System.out.println(blockchain.size()); //for testing
 
 
     }
