@@ -15,7 +15,8 @@ public class Block
     private LocalDateTime Timestamp;
     private int nonce;
     private String ThisHash;
-    private boolean Mined=false;
+    //whether or not the block is mined; starting with false, if mined, change this to ture
+    private boolean Mined = false;
 
     public Block( Transaction transaction, String previousHash,LocalDateTime timestamp)
     {
